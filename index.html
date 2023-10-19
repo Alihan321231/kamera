@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Захват фотографии с камеры и радужная кнопка</title>
+    <style>
+        /* Фон */
+        body {
+            background: linear-gradient(135deg, #FF77A9, #6A11CB);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Стилизация кнопки */
+        .rainbow-button {
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* При наведении добавляем эффект */
+        .rainbow-button:hover {
+            background: linear-gradient(45deg, violet, indigo, blue, green, yellow, orange, red);
+        }
+
+        /* Стилизация захваченной фотографии */
+        #photo {
+            display: none;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <video id="video" autoplay></video>
+        <button id="capture" class="rainbow-button">Сделать фотографию</button>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <img id="photo" src="#" alt="Фотография">
+    </div>
+
+    <script>
+        // Получаем доступ к видеопотоку с камеры
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                var video = document.getElementById('video');
+                video.srcObject = stream;
+            })
+            .catch(function (err) {
+                console.error('Ошибка доступа к камере: ' + err);
+            });
+
+        // Захватываем фотографию
+        var captureButton = document.getElementById('capture');
+        var canvas = document.getElementById('canvas');
+        var photo = document.getElementById('photo');
+
+        captureButton.addEventListener('click', function () {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+            photo.src = canvas.toDataURL('image/png');
+            // Отобразите фотографию и скройте видео
+            photo.style.display = 'block';
+            video.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
